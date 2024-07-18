@@ -96,30 +96,36 @@ public static class NormalsCalculator
                         continue;
                     }
 
-                    var index = triIndex * 3;
+                    var weightedNormal = weightedNormals[triIndex];
 
-                    int i1 = triangles[index];
-                    int i2 = triangles[index + 1];
-                    int i3 = triangles[index + 2];
-
-                    var adjacents = GetAdjacentVertices(vertices[vertIndex], vertices[i1], vertices[i2], vertices[i3]);
-
-                    Vector3 v1 = adjacents.Item1 - vertices[vertIndex];
-                    Vector3 v2 = adjacents.Item2 - vertices[vertIndex];
-
-                    angle = Vector3.Angle(v1, v2);
-
-                    switch (mode)
+                    if (mode == NormalCalculationMode.AreaWeighted)
                     {
-                        case NormalCalculationMode.AreaWeighted:
-                            sum += weightedNormals[triIndex];
-                            break;
-                        case NormalCalculationMode.AngleWeighted:
-                            sum += weightedNormals[triIndex].normalized * angle;
-                            break;
-                        case NormalCalculationMode.AreaAndAngleWeighted:
-                            sum += weightedNormals[triIndex] * angle;
-                            break;
+                        sum += weightedNormal;
+                    }
+                    else
+                    {
+                        var index = triIndex * 3;
+
+                        int i1 = triangles[index];
+                        int i2 = triangles[index + 1];
+                        int i3 = triangles[index + 2];
+
+                        var adjacents = GetAdjacentVertices(vertices[vertIndex], vertices[i1], vertices[i2], vertices[i3]);
+
+                        Vector3 v1 = adjacents.Item1 - vertices[vertIndex];
+                        Vector3 v2 = adjacents.Item2 - vertices[vertIndex];
+
+                        angle = Vector3.Angle(v1, v2);
+
+                        switch (mode)
+                        {
+                            case NormalCalculationMode.AngleWeighted:
+                                sum += weightedNormal.normalized * angle;
+                                break;
+                            case NormalCalculationMode.AreaAndAngleWeighted:
+                                sum += weightedNormal * angle;
+                                break;
+                        }
                     }
                 }
 
