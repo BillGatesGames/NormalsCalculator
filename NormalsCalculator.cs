@@ -7,14 +7,17 @@ public enum NormalCalculationMode
     ///  The normals are not weighted.
     /// </summary>
     Unweighted,
+
     /// <summary>
     ///  The normals are weighted by the face area.
     /// </summary>
     AreaWeighted,
+
     /// <summary>
     ///  The normals are weighted by the vertex angle on each face.
     /// </summary>
     AngleWeighted,
+
     /// <summary>
     ///  The normals are weighted by both the face area and the vertex angle on each face.
     /// </summary>   
@@ -38,9 +41,10 @@ public static class NormalsCalculator
 
     public static void RecalculateNormals(this Mesh mesh, NormalCalculationMode mode, float smoothingAngle)
     {
+        mesh.RecalculateNormals();
+
         if (mode == NormalCalculationMode.Unweighted)
-        {
-            mesh.RecalculateNormals();
+        {         
             return;
         }
 
@@ -67,7 +71,6 @@ public static class NormalsCalculator
             for (int j = i; j <= i + 2; j++)
             {
                 int vertIndex = triangles[j];
-                normals[vertIndex] = weightedNormals[triIndex].normalized;
 
                 var vert = vertices[vertIndex];
 
